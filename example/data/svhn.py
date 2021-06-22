@@ -31,7 +31,7 @@ class Svhn:
                                           transform=train_transform,
                                           download=True)
 
-        extra_set = datasets.SVHN(root='./data',
+        extra_set = torchvision.datasets.SVHN(root='./data',
                                       split='extra',
                                       transform=train_transform,
                                       download=True)
@@ -42,7 +42,7 @@ class Svhn:
         train_set.data = data
         train_set.labels = labels
 
-        test_set = datasets.SVHN(root='./data',
+        test_set = torchvision.datasets.SVHN(root='./data',
                                      split='test',
                                      transform=test_transform,
                                      download=True)
