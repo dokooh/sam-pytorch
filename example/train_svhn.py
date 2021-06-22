@@ -3,7 +3,7 @@ import torch
 
 from model.wide_res_net import WideResNet
 from model.smooth_cross_entropy import smooth_crossentropy
-from data.cifar import Svhn
+from data.svhn import Svhn
 from utility.log import Log
 from utility.initialize import initialize
 from utility.step_lr import StepLR
