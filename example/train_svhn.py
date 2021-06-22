@@ -76,5 +76,6 @@ if __name__ == "__main__":
                 loss = smooth_crossentropy(predictions, targets)
                 correct = torch.argmax(predictions, 1) == targets
                 log(model, loss.cpu(), correct.cpu())
-
+                
+    torch.save(model.state_dict(), 'svhn_wresnet28x10_sam_trainedepochs_' + epoch + '.pt') #added a model save
     log.flush()
