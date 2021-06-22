@@ -59,7 +59,7 @@ class Svhn:
         
         self.classes = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 
-     def _get_statistics(self):
+    def _get_statistics(self):
         train_set = torchvision.datasets.SVHN(root='./svhn', train=True, download=True, transform=transforms.ToTensor())
 
         data = torch.cat([d[0] for d in DataLoader(train_set)])
