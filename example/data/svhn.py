@@ -21,15 +21,15 @@ class Svhn:
             transforms.ToTensor(),
             normaliz])
 
-        train_set = datasets.SVHN(root='./data',
-                                      split='train',
-                                      transform=train_transform,
-                                      download=True)
+        train_set = torchvision.datasets.SVHN(root='./data',
+                                          split='train',
+                                          transform=train_transform,
+                                          download=True)
 
-        test_set = datasets.SVHN(root='./data',
-                                      split='extra',
-                                      transform=train_transform,
-                                      download=True)
+        test_set = torchvision.datasets.SVHN(root='./data',
+                                          split='extra',
+                                          transform=train_transform,
+                                          download=True)
 
         # Combine both training splits (https://arxiv.org/pdf/1605.07146.pdf)
         data = np.concatenate([train_set.data, extra_dataset.data], axis=0)
