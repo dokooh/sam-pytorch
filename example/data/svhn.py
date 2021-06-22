@@ -1,18 +1,9 @@
-import os
-import tarfile
 import torch
-import numpy as np
-import math
-
 import torchvision
-from torchvision.datasets.utils import download_url
-from torchvision.datasets import ImageFolder
-from torchvision.transforms import ToTensor
 import torchvision.transforms as transforms
-from torchvision import datasets
-from torch.utils.data import random_split
-from torch.utils.data.dataloader import DataLoader
+from torch.utils.data import DataLoader
 
+from utility.cutout import Cutout
 num_classes = 10
 batchsize = 128
 
