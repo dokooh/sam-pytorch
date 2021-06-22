@@ -4,8 +4,6 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
 from utility.cutout import Cutout
-num_classes = 10
-batchsize = 128
 
 class Svhn:
     def __init__(self, batch_size, threads):
@@ -23,12 +21,12 @@ class Svhn:
             transforms.ToTensor(),
             normaliz])
 
-        train_set = datasets.SVHN(root='data/',
+        train_set = datasets.SVHN(root='./data',
                                       split='train',
                                       transform=train_transform,
                                       download=True)
 
-        test_set = datasets.SVHN(root='data/',
+        test_set = datasets.SVHN(root='./data',
                                       split='extra',
                                       transform=train_transform,
                                       download=True)
@@ -39,20 +37,20 @@ class Svhn:
         train_set.data = data
         train_set.labels = labels
 
-        test_set = datasets.SVHN(root='data/',
+        test_set = datasets.SVHN(root='./data',
                                      split='test',
                                      transform=test_transform,
                                      download=True)
 
         # Data Loader (Input Pipeline)
         self.train = torch.utils.data.DataLoader(dataset=train_set,
-                                                   batch_size=batchsize,
+                                                   batch_size=batch_size,
                                                    shuffle=True,
                                                    pin_memory=True,
                                                    num_workers=2)
 
         self.test = torch.utils.data.DataLoader(dataset=test_set,
-                                                  batch_size=batchsize,
+                                                  batch_size=batch_size,
                                                   shuffle=False,
                                                   pin_memory=True,
                                                   num_workers=2)
