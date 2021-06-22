@@ -13,68 +13,63 @@ from torchvision import datasets
 from torch.utils.data import random_split
 from torch.utils.data.dataloader import DataLoader
 
-import torch.nn as nn
-from torch.nn import AvgPool2d
-import torch.nn.functional as F
-
-import matplotlib.pyplot as plt
-%matplotlib inline
-
-!pip install torchsummary
-from torchsummary import summary
-
-from scipy.io import loadmat
-import shutil
-from torch.autograd import Variable
-from torch.optim.lr_scheduler import MultiStepLR
-#from util.misc import CSVLogger
-import csv
-#from util.cutout import Cutout
-
-from tqdm import tqdm
-
-# image preprocess
-normaliz = transforms.Normalize(mean=[x / 255.0 for x in[109.9, 109.7, 113.8]],
-                                     std=[x / 255.0 for x in [50.1, 50.6, 50.8]])
-                                     
-train_transform = transforms.Compose([])
-train_transform.transforms.append(transforms.ToTensor())
-train_transform.transforms.append(normaliz)
-test_transform = transforms.Compose([
-    transforms.ToTensor(),
-    normaliz])
-    
 num_classes = 10
-train_dataset = datasets.SVHN(root='data/',
-                              split='train',
-                              transform=train_transform,
-                              download=True)
+batchsize = 128
 
-extra_dataset = datasets.SVHN(root='data/',
-                              split='extra',
-                              transform=train_transform,
-                              download=True)
+class Svhn:
+    def __init__(self, batch_size, threads):
+        mean, std = self._get_statistics()
 
-# Combine both training splits (https://arxiv.org/pdf/1605.07146.pdf)
-data = np.concatenate([train_dataset.data, extra_dataset.data], axis=0)
-labels = np.concatenate([train_dataset.labels, extra_dataset.labels], axis=0)
-train_dataset.data = data
-train_dataset.labels = labels
+        # image preprocess
+        normaliz = transforms.Normalize(mean=[x / 255.0 for x in[109.9, 109.7, 113.8]],
+                                             std=[x / 255.0 for x in [50.1, 50.6, 50.8]])
 
-test_dataset = datasets.SVHN(root='data/',
-                             split='test',
-                             transform=test_transform,
-                             download=True)
-                             
-# Data Loader (Input Pipeline)
-train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
-                                           batch_size=args.batch_size,
-                                           shuffle=True,
-                                           pin_memory=True,
-                                           num_workers=2)
+        train_transform = transforms.Compose([])
+        train_transform.transforms.append(transforms.ToTensor())
+        train_transform.transforms.append(normaliz)
+        
+        test_transform = transforms.Compose([
+            transforms.ToTensor(),
+            normaliz])
 
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
-                                          batch_size=args.batch_size,
-                                          shuffle=False,
-                                          pin_memory=True,
-                                          num_workers=2)
+        train_set = datasets.SVHN(root='data/',
+                                      split='train',
+                                      transform=train_transform,
+                                      download=True)
+
+        test_set = datasets.SVHN(root='data/',
+                                      split='extra',
+                                      transform=train_transform,
+                                      download=True)
+
+        # Combine both training splits (https://arxiv.org/pdf/1605.07146.pdf)
+        data = np.concatenate([train_set.data, extra_dataset.data], axis=0)
+        labels = np.concatenate([train_set.labels, extra_dataset.labels], axis=0)
+        train_set.data = data
+        train_set.labels = labels
+
+        test_set = datasets.SVHN(root='data/',
+                                     split='test',
+                                     transform=test_transform,
+                                     download=True)
+
+        # Data Loader (Input Pipeline)
+        self.train = torch.utils.data.DataLoader(dataset=train_set,
+                                                   batch_size=batchsize,
+                                                   shuffle=True,
+                                                   pin_memory=True,
+                                                   num_workers=2)
+
+        self.test = torch.utils.data.DataLoader(dataset=test_set,
+                                                  batch_size=batchsize,
+                                                  shuffle=False,
+                                                  pin_memory=True,
+                                                  num_workers=2)
+        
+        self.classes = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+
+     def _get_statistics(self):
+        train_set = torchvision.datasets.SVHN(root='./svhn', train=True, download=True, transform=transforms.ToTensor())
+
+        data = torch.cat([d[0] for d in DataLoader(train_set)])
+        return data.mean(dim=[0, 2, 3]), data.std(dim=[0, 2, 3])
