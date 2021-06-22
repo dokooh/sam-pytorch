@@ -31,14 +31,14 @@ class Svhn:
                                           transform=train_transform,
                                           download=True)
 
-        test_set = torchvision.datasets.SVHN(root='./data',
-                                          split='extra',
-                                          transform=train_transform,
-                                          download=True)
+        extra_set = datasets.SVHN(root='./data',
+                                      split='extra',
+                                      transform=train_transform,
+                                      download=True)
 
         # Combine both training splits (https://arxiv.org/pdf/1605.07146.pdf)
-        data = np.concatenate([train_set.data, extra_dataset.data], axis=0)
-        labels = np.concatenate([train_set.labels, extra_dataset.labels], axis=0)
+        data = np.concatenate([train_set.data, extra_set.data], axis=0)
+        labels = np.concatenate([train_set.labels, extra_set.labels], axis=0)
         train_set.data = data
         train_set.labels = labels
 
